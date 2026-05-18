@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Détail projet')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div class="container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-0" th:text="${projet.titre}">Projet</h2>
+            <small class="text-muted">
+                <span class="badge"
+                      th:classappend="${projet.statut.name() == 'EN_COURS'} ? 'bg-success'
+                                    : (${projet.statut.name() == 'PROPOSE'} ? 'bg-warning text-dark'
+                                    : (${projet.statut.name() == 'SOUTENU'} ? 'bg-primary' : 'bg-secondary'))"
+                      th:text="${projet.statut}"></span>
+                <span class="ms-2 badge bg-info text-dark" th:text="${projet.type}"></span>
+            </small>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/projets/{id}/modifier(id=${projet.id})}"
+               class="btn btn-outline-secondary btn-sm"
+               sec:authorize="hasAnyRole('ADMINISTRATEUR','ENCADRANT_ACADEMIQUE')">
+                <i class="bi bi-pencil me-1"></i>Modifier
+            </a>
+            <a th:href="@{/projets}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i><span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-1"></i><span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-3">
+
+        <!-- Colonne gauche: infos + actions admin -->
+        <div class="col-lg-4">
+
+            <!-- Informations générales -->
+            <div class="card mb-3">
+                <div class="card-header fw-semibold"><i class="bi bi-info-circle me-1"></i>Informations</div>
+                <div class="card-body">
+                    <dl class="row mb-0 small">
+                        <dt class="col-5">Type</dt>
+                        <dd class="col-7" th:text="${projet.type}"></dd>
+
+                        <dt class="col-5">Étudiant</dt>
+                        <dd class="col-7" th:text="${projet.etudiant != null ? projet.etudiant.nom + ' ' + projet.etudiant.prenom : '—'}"></dd>
+
+                        <dt class="col-5">Matricule</dt>
+                        <dd class="col-7" th:text="${projet.etudiant?.matricule ?: '—'}"></dd>
+
+                        <dt class="col-5">Enc. académique</dt>
+                        <dd class="col-7" th:text="${projet.encadrantAcademique != null ? projet.encadrantAcademique.nom + ' ' + projet.encadrantAcademique.prenom : '—'}"></dd>
+
+                        <dt class="col-5">Enc. professionnel</dt>
+                        <dd class="col-7" th:text="${projet.encadrantProfessionnel != null ? projet.encadrantProfessionnel.nom + ' ' + projet.encadrantProfessionnel.prenom : '—'}"></dd>
+
+                        <dt class="col-5">Lieu de stage</dt>
+                        <dd class="col-7" th:text="${projet.lieuStage ?: '—'}"></dd>
+
+                        <dt class="col-5">Date début</dt>
+                        <dd class="col-7" th:text="${projet.dateDebut ?: '—'}"></dd>
+
+                        <dt class="col-5">Date fin</dt>
+                        <dd class="col-7" th:text="${projet.dateFinPrevue ?: '—'}"></dd>
+
+                        <dt class="col-5">Résultat</dt>
+                        <dd class="col-7 fw-bold"
+                            th:text="${projet.resultatFinal != null ? projet.resultatFinal + '/20' : '—'}"></dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Changer le statut (Admin) -->
+            <div class="card mb-3" sec:authorize="hasRole('ADMINISTRATEUR')">
+                <div class="card-header fw-semibold"><i class="bi bi-arrow-repeat me-1"></i>Changer le statut</div>
+                <div class="card-body">
+                    <form th:action="@{/projets/{id}/statut(id=${projet.id})}" method="post">
+                        <select name="statut" class="form-select form-select-sm mb-2">
+                            <option th:each="s : ${statuts}"
+                                    th:value="${s}"
+                                    th:text="${s}"
+                                    th:selected="${s == projet.statut}"></option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-primary w-100" type="submit">
+                            <i class="bi bi-check me-1"></i>Appliquer
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Affecter encadrants (Admin) -->
+            <div class="card mb-3" sec:authorize="hasRole('ADMINISTRATEUR')">
+                <div class="card-header fw-semibold"><i class="bi bi-person-check me-1"></i>Affecter encadrants</div>
+                <div class="card-body">
+                    <form th:action="@{/projets/{id}/encadrants(id=${projet.id})}" method="post">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Encadrant académique *</label>
+                            <select name="encadrantAcademiqueId" class="form-select form-select-sm" required>
+                                <option value="">-- Sélectionner --</option>
+                                <option th:each="e : ${encadrantsAcademiques}"
+                                        th:value="${e.id}"
+                                        th:selected="${projet.encadrantAcademique != null and e.id == projet.encadrantAcademique.id}"
+                                        th:text="${e.nom + ' ' + e.prenom}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Encadrant professionnel</label>
+                            <select name="encadrantProfessionnelId" class="form-select form-select-sm">
+                                <option value="">-- Aucun --</option>
+                                <option th:each="e : ${encadrantsProfessionnels}"
+                                        th:value="${e.id}"
+                                        th:selected="${projet.encadrantProfessionnel != null and e.id == projet.encadrantProfessionnel.id}"
+                                        th:text="${e.nom + ' ' + e.prenom}"></option>
+                            </select>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary w-100" type="submit">
+                            <i class="bi bi-check me-1"></i>Enregistrer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite: contenu -->
+        <div class="col-lg-8">
+
+            <!-- Description -->
+            <div class="card mb-3" th:if="${projet.description != null and !#strings.isEmpty(projet.description)}">
+                <div class="card-header fw-semibold"><i class="bi bi-text-paragraph me-1"></i>Description</div>
+                <div class="card-body">
+                    <p class="mb-0" th:text="${projet.description}"></p>
+                </div>
+            </div>
+
+            <!-- Soumettre un rapport (Étudiant) -->
+            <div class="card mb-3" sec:authorize="hasRole('ETUDIANT')">
+                <div class="card-header fw-semibold"><i class="bi bi-upload me-1"></i>Soumettre un rapport</div>
+                <div class="card-body">
+                    <form th:action="@{/projets/{id}/rapports(id=${projet.id})}"
+                          method="post" enctype="multipart/form-data">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Fichier PDF</label>
+                            <input type="file" name="file" class="form-control form-control-sm" accept=".pdf"/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Commentaire</label>
+                            <textarea name="commentaireEtudiant" class="form-control form-control-sm" rows="2"
+                                      placeholder="Commentaire optionnel..."></textarea>
+                        </div>
+                        <button class="btn btn-sm btn-success" type="submit">
+                            <i class="bi bi-upload me-1"></i>Soumettre
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Versions de rapport -->
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">
+                    <i class="bi bi-file-earmark-text me-1"></i>Versions de rapport
+                    <span class="badge bg-secondary ms-1" th:text="${#lists.size(projet.versionsRapport)}"></span>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" th:if="${!#lists.isEmpty(projet.versionsRapport)}">
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            th:each="v : ${projet.versionsRapport}">
+                            <div>
+                                <strong>Version <span th:text="${v.numeroVersion}"></span></strong>
+                                <small class="text-muted ms-2" th:text="${v.dateSoumission}"></small>
+                                <div class="text-muted small" th:if="${v.commentaireEtudiant != null}"
+                                     th:text="${v.commentaireEtudiant}"></div>
+                            </div>
+                            <a th:href="@{/api/v1/rapports/{id}/download(id=${v.id})}"
+                               class="btn btn-sm btn-outline-success" title="Télécharger">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="text-muted text-center py-3 mb-0"
+                       th:if="${#lists.isEmpty(projet.versionsRapport)}">
+                        <i class="bi bi-file-earmark me-1"></i>Aucun rapport soumis
+                    </p>
+                </div>
+            </div>
+
+            <!-- Séances d'encadrement -->
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">
+                    <i class="bi bi-calendar-event me-1"></i>Séances d'encadrement
+                    <span class="badge bg-secondary ms-1" th:text="${#lists.size(projet.seances)}"></span>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" th:if="${!#lists.isEmpty(projet.seances)}">
+                        <li class="list-group-item" th:each="s : ${projet.seances}">
+                            <span class="badge bg-info text-dark me-2" th:text="${s.mode}"></span>
+                            <span th:text="${s.dateSeance}"></span>
+                            <small class="text-muted ms-2" th:text="${s.dureeMinutes + ' min'}"></small>
+                            <div class="text-muted small" th:if="${s.notes != null}"
+                                 th:text="${s.notes}"></div>
+                        </li>
+                    </ul>
+                    <p class="text-muted text-center py-3 mb-0" th:if="${#lists.isEmpty(projet.seances)}">
+                        <i class="bi bi-calendar-x me-1"></i>Aucune séance enregistrée
+                    </p>
+                </div>
+            </div>
+
+            <!-- Soutenance -->
+            <div class="card mb-3" th:if="${projet.soutenance != null}">
+                <div class="card-header fw-semibold"><i class="bi bi-mortarboard me-1"></i>Soutenance</div>
+                <div class="card-body">
+                    <dl class="row mb-0 small">
+                        <dt class="col-5">Date</dt>
+                        <dd class="col-7" th:text="${projet.soutenance.dateSoutenance}"></dd>
+                        <dt class="col-5">Lieu</dt>
+                        <dd class="col-7" th:text="${projet.soutenance.lieu ?: '—'}"></dd>
+                        <dt class="col-5">Statut</dt>
+                        <dd class="col-7" th:text="${projet.soutenance.statut}"></dd>
+                        <dt class="col-5">Résultat</dt>
+                        <dd class="col-7 fw-bold" th:text="${projet.resultatFinal != null ? projet.resultatFinal + '/20' : '—'}"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

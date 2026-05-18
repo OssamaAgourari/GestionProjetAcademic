@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Connexion')}"></head>
+<body class="bg-light">
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div style="width:420px">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title text-center mb-1">
+                    <i class="bi bi-mortarboard-fill text-primary me-2"></i>ISMAGI Projets
+                </h4>
+                <p class="text-center text-muted small mb-4">Gestion des projets académiques</p>
+
+                <div th:if="${param.registered}" class="alert alert-success small py-2">
+                    <i class="bi bi-check-circle me-1"></i>Compte créé ! Connectez-vous maintenant.
+                </div>
+                <div th:if="${param.error}" class="alert alert-danger small py-2">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Email ou mot de passe incorrect.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-info small py-2">
+                    <i class="bi bi-check-circle me-1"></i>Vous avez été déconnecté.
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="username" class="form-control" placeholder="votre@email.ma" required autofocus/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mot de passe</label>
+                        <input type="password" name="password" class="form-control" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Se connecter
+                    </button>
+                </form>
+
+                <hr class="my-3"/>
+                <div class="text-center">
+                    <small class="text-muted">Pas encore de compte étudiant ?</small><br/>
+                    <a th:href="@{/register}" class="btn btn-outline-secondary btn-sm mt-1">
+                        <i class="bi bi-person-plus me-1"></i>Créer un compte étudiant
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comptes de démonstration -->
+        <div class="card mt-3 border-warning">
+            <div class="card-header bg-warning bg-opacity-10 py-2">
+                <small class="fw-semibold text-warning-emphasis">
+                    <i class="bi bi-info-circle me-1"></i>Comptes de démonstration (mot de passe : <code>Pass@123</code>)
+                </small>
+            </div>
+            <div class="card-body p-2">
+                <table class="table table-sm table-borderless mb-0" style="font-size:.8rem">
+                    <tbody>
+                    <tr>
+                        <td><span class="badge bg-danger">Admin</span></td>
+                        <td><code>admin@ismagi.ma</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-primary">Étudiant</span></td>
+                        <td><code>etudiant1@ismagi.ma</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-success">Encadrant</span></td>
+                        <td><code>enc.acad1@ismagi.ma</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-warning text-dark">Jury</span></td>
+                        <td><code>jury1@ismagi.ma</code></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inscription')}"></head>
+<body class="bg-light">
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow-sm" style="width:460px">
+        <div class="card-body p-4">
+            <h4 class="card-title text-center mb-1">
+                <i class="bi bi-person-plus text-primary me-2"></i>Créer un compte étudiant
+            </h4>
+            <p class="text-center text-muted small mb-4">ISMAGI — Gestion des projets académiques</p>
+
+            <div th:if="${errorMessage}" class="alert alert-danger small py-2" th:text="${errorMessage}"></div>
+
+            <form th:action="@{/register}" method="post">
+                <div class="row g-2 mb-2">
+                    <div class="col">
+                        <label class="form-label fw-semibold">Nom</label>
+                        <input type="text" name="nom" class="form-control" th:value="${form?.nom}" required maxlength="100"/>
+                    </div>
+                    <div class="col">
+                        <label class="form-label fw-semibold">Prénom</label>
+                        <input type="text" name="prenom" class="form-control" th:value="${form?.prenom}" required maxlength="100"/>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold">Email</label>
+                    <input type="email" name="email" class="form-control" th:value="${form?.email}" required maxlength="150"/>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold">Téléphone</label>
+                    <input type="text" name="telephone" class="form-control" th:value="${form?.telephone}" maxlength="20"/>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-semibold">Matricule</label>
+                    <input type="text" name="matricule" class="form-control" th:value="${form?.matricule}" required maxlength="20" placeholder="ex: ETU123"/>
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col">
+                        <label class="form-label fw-semibold">Filière</label>
+                        <input type="text" name="filiere" class="form-control" th:value="${form?.filiere}" maxlength="100" placeholder="ex: Informatique"/>
+                    </div>
+                    <div class="col">
+                        <label class="form-label fw-semibold">Niveau</label>
+                        <select name="niveau" class="form-select">
+                            <option value="">--</option>
+                            <option value="1A">1A</option>
+                            <option value="2A">2A</option>
+                            <option value="3A">3A</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Mot de passe</label>
+                    <input type="password" name="motDePasse" class="form-control" required minlength="8"/>
+                    <div class="form-text">Minimum 8 caractères.</div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-check-circle me-1"></i>Créer mon compte
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <a th:href="@{/login}" class="text-decoration-none small">
+                    <i class="bi bi-arrow-left me-1"></i>Déjà un compte ? Se connecter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
