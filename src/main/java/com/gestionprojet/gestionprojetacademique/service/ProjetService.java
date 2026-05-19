@@ -19,6 +19,7 @@ public interface ProjetService {
     Page<ProjetResponse> findByStatut(StatutProjet statut, Pageable pageable);
     List<ProjetResponse> findByEtudiant(Long etudiantId);
     List<ProjetResponse> findByEncadrant(Long encadrantId);
+    List<ProjetResponse> findByEncadrantProfessionnel(Long encadrantId);
     ProjetResponse affecterEncadrants(Long id, AffecterEncadrantsRequest request);
     ProjetResponse changerStatut(Long id, StatutProjet statut);
     void archiver(Long id);

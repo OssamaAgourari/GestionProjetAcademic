@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface EvaluationJuryRepository extends JpaRepository<EvaluationJury, EvaluationJuryId> {
     List<EvaluationJury> findBySoutenanceId(Long soutenanceId);
+    List<EvaluationJury> findByMembreJuryId(Long membreJuryId);
+    boolean existsBySoutenanceIdAndMembreJuryId(Long soutenanceId, Long membreJuryId);
 
     @Query("SELECT AVG(e.note) FROM EvaluationJury e WHERE e.soutenance.id = :soutenanceId")
     Optional<Double> findAverageNoteBySoutenanceId(Long soutenanceId);

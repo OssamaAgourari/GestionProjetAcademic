@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProjetRepository extends JpaRepository<Projet, Long> {
     List<Projet> findByEtudiantId(Long etudiantId);
     List<Projet> findByEncadrantAcademiqueId(Long encadrantId);
+    List<Projet> findByEncadrantProfessionnelId(Long encadrantId);
     List<Projet> findByStatut(StatutProjet statut);
     Page<Projet> findByStatut(StatutProjet statut, Pageable pageable);
     Page<Projet> findAll(Pageable pageable);

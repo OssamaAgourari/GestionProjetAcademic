@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 public interface RapportMapper {
 
     @Mapping(target = "projetId", source = "projet.id")
+    @Mapping(target = "feedbacks", source = "feedbacks")
     RapportVersionResponse toResponse(RapportVersion version);
 
     @Mapping(target = "versionId", source = "version.id")

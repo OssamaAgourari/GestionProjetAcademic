@@ -116,6 +116,13 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ProjetResponse> findByEncadrantProfessionnel(Long encadrantId) {
+        return projetRepository.findByEncadrantProfessionnelId(encadrantId).stream()
+                .map(projetMapper::toResponse).toList();
+    }
+
+    @Override
     public ProjetResponse affecterEncadrants(Long id, AffecterEncadrantsRequest request) {
         Projet projet = getProjetOrThrow(id);
         EncadrantAcademique encadrant = encadrantAcademiqueRepository.findById(request.encadrantAcademiqueId())

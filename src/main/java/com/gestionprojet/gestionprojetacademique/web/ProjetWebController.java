@@ -64,6 +64,7 @@ public class ProjetWebController {
                        @RequestParam(required = false) StatutProjet statut,
                        Authentication auth) {
         boolean isEtudiant = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ETUDIANT"));
+        boolean isEncadrantPro = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ENCADRANT_PROFESSIONNEL"));
 
         if (isEtudiant) {
             Etudiant etudiant = etudiantRepository.findByEmail(auth.getName())
@@ -74,6 +75,15 @@ public class ProjetWebController {
                     : mes;
             model.addAttribute("projets", new PageImpl<>(filtered));
             model.addAttribute("myProjectOnly", true);
+        } else if (isEncadrantPro) {
+            encadrantProfessionnelRepository.findByEmail(auth.getName()).ifPresent(e -> {
+                List<ProjetResponse> mes = projetService.findByEncadrantProfessionnel(e.getId());
+                List<ProjetResponse> filtered = (statut != null)
+                        ? mes.stream().filter(p -> p.statut() == statut).toList()
+                        : mes;
+                model.addAttribute("projets", new PageImpl<>(filtered));
+                model.addAttribute("myProjectOnly", true);
+            });
         } else if (statut != null) {
             model.addAttribute("projets", projetService.findByStatut(statut, pageable));
         } else {
@@ -123,9 +133,17 @@ public class ProjetWebController {
         ProjetDetailResponse projet = projetService.findById(id);
 
         boolean isEtudiant = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ETUDIANT"));
+        boolean isEncadrantProDetail = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ENCADRANT_PROFESSIONNEL"));
+
         if (isEtudiant) {
             Etudiant etudiant = etudiantRepository.findByEmail(auth.getName()).orElse(null);
             if (etudiant == null || !etudiant.getId().equals(projet.etudiant().id())) {
+                return "redirect:/projets?error=acces_refuse";
+            }
+        } else if (isEncadrantProDetail) {
+            var encPro = encadrantProfessionnelRepository.findByEmail(auth.getName()).orElse(null);
+            if (encPro == null || projet.encadrantProfessionnel() == null
+                    || !encPro.getId().equals(projet.encadrantProfessionnel().id())) {
                 return "redirect:/projets?error=acces_refuse";
             }
         }

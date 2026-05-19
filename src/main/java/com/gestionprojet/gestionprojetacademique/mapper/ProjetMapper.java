@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {UtilisateurMapper.class})
 public interface ProjetMapper {
 
+    @Mapping(target = "resultatFinal", source = "resultatFinal")
     @Mapping(target = "etudiant", source = "etudiant")
     @Mapping(target = "encadrantAcademique", source = "encadrantAcademique")
     @Mapping(target = "encadrantProfessionnel", source = "encadrantProfessionnel")

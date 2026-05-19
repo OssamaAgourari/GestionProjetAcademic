@@ -52,31 +52,31 @@
             </thead>
             <tbody>
             <tr th:each="p : ${projets.content}">
-                <td class="text-muted small" th:text="${p.id}"></td>
+                <td class="text-muted small" th:text="${p.id()}"></td>
                 <td>
-                    <a th:href="@{/projets/{id}(id=${p.id})}" class="fw-semibold text-decoration-none"
-                       th:text="${p.titre}"></a>
+                    <a th:href="@{/projets/{id}(id=${p.id()})}" class="fw-semibold text-decoration-none"
+                       th:text="${p.titre()}"></a>
                 </td>
                 <td>
-                    <span class="badge bg-info text-dark" th:text="${p.type}"></span>
+                    <span class="badge bg-info text-dark" th:text="${p.type()}"></span>
                 </td>
                 <td>
                     <span class="badge"
-                          th:classappend="${p.statut.name() == 'EN_COURS'} ? 'bg-success'
-                                        : (${p.statut.name() == 'PROPOSE'} ? 'bg-warning text-dark'
-                                        : (${p.statut.name() == 'SOUTENU'} ? 'bg-primary' : 'bg-secondary'))"
-                          th:text="${p.statut}"></span>
+                          th:classappend="${p.statut().name() == 'EN_COURS'} ? 'bg-success'
+                                        : (${p.statut().name() == 'PROPOSE'} ? 'bg-warning text-dark'
+                                        : (${p.statut().name() == 'SOUTENU'} ? 'bg-primary' : 'bg-secondary'))"
+                          th:text="${p.statut()}"></span>
                 </td>
-                <td th:text="${p.etudiant != null ? p.etudiant.nom + ' ' + p.etudiant.prenom : '—'}"></td>
-                <td th:text="${p.encadrantAcademique != null ? p.encadrantAcademique.nom + ' ' + p.encadrantAcademique.prenom : '—'}"></td>
-                <td th:text="${p.resultatFinal != null ? p.resultatFinal + '/20' : '—'}"></td>
+                <td th:text="${p.etudiant() != null ? p.etudiant().nom() + ' ' + p.etudiant().prenom() : '—'}"></td>
+                <td th:text="${p.encadrantAcademique() != null ? p.encadrantAcademique().nom() + ' ' + p.encadrantAcademique().prenom() : '—'}"></td>
+                <td th:text="${p.resultatFinal() != null ? p.resultatFinal() + '/20' : '—'}"></td>
                 <td>
                     <div class="d-flex gap-1">
-                        <a th:href="@{/projets/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary"
+                        <a th:href="@{/projets/{id}(id=${p.id()})}" class="btn btn-sm btn-outline-primary"
                            title="Voir">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a th:href="@{/projets/{id}/modifier(id=${p.id})}" class="btn btn-sm btn-outline-secondary"
+                        <a th:href="@{/projets/{id}/modifier(id=${p.id()})}" class="btn btn-sm btn-outline-secondary"
                            sec:authorize="hasAnyRole('ADMINISTRATEUR','ENCADRANT_ACADEMIQUE')" title="Modifier">
                             <i class="bi bi-pencil"></i>
                         </a>

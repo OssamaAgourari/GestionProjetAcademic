@@ -5,6 +5,7 @@ import com.gestionprojet.gestionprojetacademique.repository.*;
 
 import java.time.LocalDate;
 import com.gestionprojet.gestionprojetacademique.service.ProjetService;
+import com.gestionprojet.gestionprojetacademique.service.SoutenanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,6 +27,7 @@ public class DashboardController {
     private final RapportVersionRepository rapportRepository;
     private final SoutenanceRepository soutenanceRepository;
     private final ProjetService projetService;
+    private final SoutenanceService soutenanceService;
 
     @GetMapping("/")
     public String root() {
@@ -39,6 +41,8 @@ public class DashboardController {
         boolean isAdmin = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMINISTRATEUR"));
         boolean isEtudiant = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ETUDIANT"));
         boolean isEncadrant = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ENCADRANT_ACADEMIQUE"));
+        boolean isEncadrantPro = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ENCADRANT_PROFESSIONNEL"));
+        boolean isJury = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MEMBRE_JURY"));
 
         if (isAdmin) {
             long total = projetRepository.count();
@@ -96,6 +100,24 @@ public class DashboardController {
                 var mes = projetService.findByEncadrant(e.getId());
                 model.addAttribute("mesProjets", mes);
                 model.addAttribute("totalMesProjets", mes.size());
+            });
+            return "dashboard";
+        }
+
+        if (isEncadrantPro) {
+            encadrantProRepo.findByEmail(auth.getName()).ifPresent(e -> {
+                var mes = projetService.findByEncadrantProfessionnel(e.getId());
+                model.addAttribute("mesProjets", mes);
+                model.addAttribute("totalMesProjets", mes.size());
+            });
+            return "dashboard";
+        }
+
+        if (isJury) {
+            membreJuryRepo.findByEmail(auth.getName()).ifPresent(jury -> {
+                var mes = soutenanceService.findByMembreJury(jury.getId());
+                model.addAttribute("mesSoutenances", mes);
+                model.addAttribute("totalMesSoutenances", mes.size());
             });
             return "dashboard";
         }

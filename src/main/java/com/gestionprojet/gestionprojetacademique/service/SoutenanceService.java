@@ -8,4 +8,5 @@ public interface SoutenanceService {
     SoutenanceResponse findById(Long id);
     SoutenanceResponse cloturer(Long soutenanceId);
     java.util.List<SoutenanceResponse> findAll();
+    java.util.List<SoutenanceResponse> findByMembreJury(Long juryId);
 }
