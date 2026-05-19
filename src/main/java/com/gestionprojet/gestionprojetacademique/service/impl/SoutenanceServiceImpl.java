@@ -95,6 +95,13 @@ public class SoutenanceServiceImpl implements SoutenanceService {
         return soutenanceMapper.toResponse(soutenanceRepository.save(soutenance));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<SoutenanceResponse> findAll() {
+        return soutenanceRepository.findAll().stream()
+                .map(soutenanceMapper::toResponse).toList();
+    }
+
     private void assignerJury(Soutenance soutenance, List<Long> membreJuryIds) {
         for (Long juryId : membreJuryIds) {
             MembreJury membre = membreJuryRepository.findById(juryId)

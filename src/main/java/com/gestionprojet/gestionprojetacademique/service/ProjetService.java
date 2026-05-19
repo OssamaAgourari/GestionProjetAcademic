@@ -16,6 +16,7 @@ public interface ProjetService {
     ProjetResponse update(Long id, UpdateProjetRequest request);
     ProjetDetailResponse findById(Long id);
     Page<ProjetResponse> findAll(Pageable pageable);
+    Page<ProjetResponse> findByStatut(StatutProjet statut, Pageable pageable);
     List<ProjetResponse> findByEtudiant(Long etudiantId);
     List<ProjetResponse> findByEncadrant(Long encadrantId);
     ProjetResponse affecterEncadrants(Long id, AffecterEncadrantsRequest request);

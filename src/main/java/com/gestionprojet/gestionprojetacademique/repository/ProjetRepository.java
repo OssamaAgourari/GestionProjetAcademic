@@ -13,6 +13,7 @@ public interface ProjetRepository extends JpaRepository<Projet, Long> {
     List<Projet> findByEtudiantId(Long etudiantId);
     List<Projet> findByEncadrantAcademiqueId(Long encadrantId);
     List<Projet> findByStatut(StatutProjet statut);
+    Page<Projet> findByStatut(StatutProjet statut, Pageable pageable);
     Page<Projet> findAll(Pageable pageable);
 
     @Query("SELECT p FROM Projet p WHERE p.statut = 'EN_COURS' AND p.dateFinPrevue < CURRENT_DATE")

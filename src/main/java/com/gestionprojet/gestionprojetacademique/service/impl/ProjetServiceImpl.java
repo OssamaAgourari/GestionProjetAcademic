@@ -97,6 +97,12 @@ public class ProjetServiceImpl implements ProjetService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ProjetResponse> findByStatut(StatutProjet statut, Pageable pageable) {
+        return projetRepository.findByStatut(statut, pageable).map(projetMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ProjetResponse> findByEtudiant(Long etudiantId) {
         return projetRepository.findByEtudiantId(etudiantId).stream()
                 .map(projetMapper::toResponse).toList();

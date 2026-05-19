@@ -20,8 +20,7 @@
             </small>
         </div>
         <div class="d-flex gap-2">
-            <a th:href="@{/projets/{id}/modifier(id=${projet.id})}"
-               class="btn btn-outline-secondary btn-sm"
+            <a th:href="@{/projets/{id}/modifier(id=${projet.id})}" class="btn btn-outline-secondary btn-sm"
                sec:authorize="hasAnyRole('ADMINISTRATEUR','ENCADRANT_ACADEMIQUE')">
                 <i class="bi bi-pencil me-1"></i>Modifier
             </a>
@@ -32,68 +31,58 @@
     </div>
 
     <!-- Flash messages -->
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
         <i class="bi bi-check-circle me-1"></i><span th:text="${successMessage}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
         <i class="bi bi-exclamation-triangle me-1"></i><span th:text="${errorMessage}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
     <div class="row g-3">
 
-        <!-- Colonne gauche: infos + actions admin -->
+        <!-- ── Colonne gauche : infos + panneaux admin ── -->
         <div class="col-lg-4">
 
-            <!-- Informations générales -->
-            <div class="card mb-3">
-                <div class="card-header fw-semibold"><i class="bi bi-info-circle me-1"></i>Informations</div>
+            <!-- Informations -->
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-info-circle me-1 text-primary"></i>Informations</div>
                 <div class="card-body">
                     <dl class="row mb-0 small">
                         <dt class="col-5">Type</dt>
                         <dd class="col-7" th:text="${projet.type}"></dd>
-
                         <dt class="col-5">Étudiant</dt>
                         <dd class="col-7" th:text="${projet.etudiant != null ? projet.etudiant.nom + ' ' + projet.etudiant.prenom : '—'}"></dd>
-
                         <dt class="col-5">Matricule</dt>
                         <dd class="col-7" th:text="${projet.etudiant?.matricule ?: '—'}"></dd>
-
                         <dt class="col-5">Enc. académique</dt>
                         <dd class="col-7" th:text="${projet.encadrantAcademique != null ? projet.encadrantAcademique.nom + ' ' + projet.encadrantAcademique.prenom : '—'}"></dd>
-
                         <dt class="col-5">Enc. professionnel</dt>
                         <dd class="col-7" th:text="${projet.encadrantProfessionnel != null ? projet.encadrantProfessionnel.nom + ' ' + projet.encadrantProfessionnel.prenom : '—'}"></dd>
-
                         <dt class="col-5">Lieu de stage</dt>
                         <dd class="col-7" th:text="${projet.lieuStage ?: '—'}"></dd>
-
                         <dt class="col-5">Date début</dt>
                         <dd class="col-7" th:text="${projet.dateDebut ?: '—'}"></dd>
-
-                        <dt class="col-5">Date fin</dt>
+                        <dt class="col-5">Date fin prévue</dt>
                         <dd class="col-7" th:text="${projet.dateFinPrevue ?: '—'}"></dd>
-
-                        <dt class="col-5">Résultat</dt>
-                        <dd class="col-7 fw-bold"
+                        <dt class="col-5">Résultat final</dt>
+                        <dd class="col-7 fw-bold text-success"
                             th:text="${projet.resultatFinal != null ? projet.resultatFinal + '/20' : '—'}"></dd>
                     </dl>
                 </div>
             </div>
 
             <!-- Changer le statut (Admin) -->
-            <div class="card mb-3" sec:authorize="hasRole('ADMINISTRATEUR')">
-                <div class="card-header fw-semibold"><i class="bi bi-arrow-repeat me-1"></i>Changer le statut</div>
+            <div class="card mb-3 border-0 shadow-sm" sec:authorize="hasRole('ADMINISTRATEUR')">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-arrow-repeat me-1 text-primary"></i>Changer le statut</div>
                 <div class="card-body">
                     <form th:action="@{/projets/{id}/statut(id=${projet.id})}" method="post">
                         <select name="statut" class="form-select form-select-sm mb-2">
-                            <option th:each="s : ${statuts}"
-                                    th:value="${s}"
-                                    th:text="${s}"
+                            <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}"
                                     th:selected="${s == projet.statut}"></option>
                         </select>
-                        <button class="btn btn-sm btn-outline-primary w-100" type="submit">
+                        <button class="btn btn-sm btn-primary w-100" type="submit">
                             <i class="bi bi-check me-1"></i>Appliquer
                         </button>
                     </form>
@@ -101,16 +90,15 @@
             </div>
 
             <!-- Affecter encadrants (Admin) -->
-            <div class="card mb-3" sec:authorize="hasRole('ADMINISTRATEUR')">
-                <div class="card-header fw-semibold"><i class="bi bi-person-check me-1"></i>Affecter encadrants</div>
+            <div class="card mb-3 border-0 shadow-sm" sec:authorize="hasRole('ADMINISTRATEUR')">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-person-check me-1 text-primary"></i>Affecter encadrants</div>
                 <div class="card-body">
                     <form th:action="@{/projets/{id}/encadrants(id=${projet.id})}" method="post">
                         <div class="mb-2">
                             <label class="form-label small fw-semibold mb-1">Encadrant académique *</label>
                             <select name="encadrantAcademiqueId" class="form-select form-select-sm" required>
                                 <option value="">-- Sélectionner --</option>
-                                <option th:each="e : ${encadrantsAcademiques}"
-                                        th:value="${e.id}"
+                                <option th:each="e : ${encadrantsAcademiques}" th:value="${e.id}"
                                         th:selected="${projet.encadrantAcademique != null and e.id == projet.encadrantAcademique.id}"
                                         th:text="${e.nom + ' ' + e.prenom}"></option>
                             </select>
@@ -119,40 +107,73 @@
                             <label class="form-label small fw-semibold mb-1">Encadrant professionnel</label>
                             <select name="encadrantProfessionnelId" class="form-select form-select-sm">
                                 <option value="">-- Aucun --</option>
-                                <option th:each="e : ${encadrantsProfessionnels}"
-                                        th:value="${e.id}"
+                                <option th:each="e : ${encadrantsProfessionnels}" th:value="${e.id}"
                                         th:selected="${projet.encadrantProfessionnel != null and e.id == projet.encadrantProfessionnel.id}"
                                         th:text="${e.nom + ' ' + e.prenom}"></option>
                             </select>
                         </div>
-                        <button class="btn btn-sm btn-outline-primary w-100" type="submit">
+                        <button class="btn btn-sm btn-primary w-100" type="submit">
                             <i class="bi bi-check me-1"></i>Enregistrer
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Planifier soutenance (Admin) -->
+            <div class="card mb-3 border-0 shadow-sm border-primary"
+                 sec:authorize="hasRole('ADMINISTRATEUR')"
+                 th:if="${projet.soutenance == null and projet.statut.name() == 'EN_COURS'}">
+                <div class="card-header bg-white fw-semibold text-primary">
+                    <i class="bi bi-mortarboard me-1"></i>Planifier une soutenance
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/projets/{id}/planifier-soutenance(id=${projet.id})}" method="post">
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Date et heure *</label>
+                            <input type="datetime-local" name="dateSoutenance" class="form-control form-control-sm" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Lieu *</label>
+                            <input type="text" name="lieu" class="form-control form-control-sm"
+                                   placeholder="ex: Salle des conférences A" required/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Membres du jury</label>
+                            <select name="membreJuryIds" class="form-select form-select-sm" multiple size="4">
+                                <option th:each="j : ${membresJury}" th:value="${j.id}"
+                                        th:text="${j.nom + ' ' + j.prenom + ' — ' + j.institution}"></option>
+                            </select>
+                            <div class="form-text">Ctrl+clic pour sélectionner plusieurs</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary w-100" type="submit">
+                            <i class="bi bi-calendar-plus me-1"></i>Planifier
                         </button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Colonne droite: contenu -->
+        <!-- ── Colonne droite : contenu et actions rôles ── -->
         <div class="col-lg-8">
 
             <!-- Description -->
-            <div class="card mb-3" th:if="${projet.description != null and !#strings.isEmpty(projet.description)}">
-                <div class="card-header fw-semibold"><i class="bi bi-text-paragraph me-1"></i>Description</div>
-                <div class="card-body">
-                    <p class="mb-0" th:text="${projet.description}"></p>
-                </div>
+            <div class="card mb-3 border-0 shadow-sm"
+                 th:if="${projet.description != null and !#strings.isEmpty(projet.description)}">
+                <div class="card-header bg-white fw-semibold"><i class="bi bi-text-paragraph me-1 text-primary"></i>Description</div>
+                <div class="card-body"><p class="mb-0" th:text="${projet.description}"></p></div>
             </div>
 
             <!-- Soumettre un rapport (Étudiant) -->
-            <div class="card mb-3" sec:authorize="hasRole('ETUDIANT')">
-                <div class="card-header fw-semibold"><i class="bi bi-upload me-1"></i>Soumettre un rapport</div>
+            <div class="card mb-3 border-0 shadow-sm border-success" sec:authorize="hasRole('ETUDIANT')">
+                <div class="card-header bg-white fw-semibold text-success">
+                    <i class="bi bi-upload me-1"></i>Soumettre un rapport
+                </div>
                 <div class="card-body">
                     <form th:action="@{/projets/{id}/rapports(id=${projet.id})}"
                           method="post" enctype="multipart/form-data">
                         <div class="mb-2">
-                            <label class="form-label small fw-semibold mb-1">Fichier PDF</label>
-                            <input type="file" name="file" class="form-control form-control-sm" accept=".pdf"/>
+                            <label class="form-label small fw-semibold mb-1">Fichier PDF <span class="text-danger">*</span></label>
+                            <input type="file" name="file" class="form-control form-control-sm" accept=".pdf" required/>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small fw-semibold mb-1">Commentaire</label>
@@ -167,69 +188,157 @@
             </div>
 
             <!-- Versions de rapport -->
-            <div class="card mb-3">
-                <div class="card-header fw-semibold">
-                    <i class="bi bi-file-earmark-text me-1"></i>Versions de rapport
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-file-earmark-text me-1 text-primary"></i>Versions de rapport
                     <span class="badge bg-secondary ms-1" th:text="${#lists.size(projet.versionsRapport)}"></span>
                 </div>
                 <div class="card-body p-0">
-                    <ul class="list-group list-group-flush" th:if="${!#lists.isEmpty(projet.versionsRapport)}">
-                        <li class="list-group-item d-flex justify-content-between align-items-center"
-                            th:each="v : ${projet.versionsRapport}">
+                    <div th:if="${#lists.isEmpty(projet.versionsRapport)}"
+                         class="text-center text-muted py-3 small">
+                        <i class="bi bi-file-earmark me-1"></i>Aucun rapport soumis
+                    </div>
+                    <div th:each="v : ${projet.versionsRapport}" class="border-bottom p-3">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <strong>Version <span th:text="${v.numeroVersion}"></span></strong>
                                 <small class="text-muted ms-2" th:text="${v.dateSoumission}"></small>
-                                <div class="text-muted small" th:if="${v.commentaireEtudiant != null}"
+                                <div class="text-muted small mt-1" th:if="${v.commentaireEtudiant != null}"
                                      th:text="${v.commentaireEtudiant}"></div>
                             </div>
                             <a th:href="@{/api/v1/rapports/{id}/download(id=${v.id})}"
-                               class="btn btn-sm btn-outline-success" title="Télécharger">
+                               class="btn btn-sm btn-outline-success ms-2" title="Télécharger">
                                 <i class="bi bi-download"></i>
                             </a>
-                        </li>
-                    </ul>
-                    <p class="text-muted text-center py-3 mb-0"
-                       th:if="${#lists.isEmpty(projet.versionsRapport)}">
-                        <i class="bi bi-file-earmark me-1"></i>Aucun rapport soumis
-                    </p>
+                        </div>
+                        <!-- Feedback form pour encadrant -->
+                        <div class="mt-2 pt-2 border-top" sec:authorize="hasAnyRole('ENCADRANT_ACADEMIQUE','ADMINISTRATEUR')">
+                            <form th:action="@{/projets/rapports/{vid}/feedbacks(vid=${v.id})}" method="post" class="row g-2 align-items-end">
+                                <input type="hidden" name="projetId" th:value="${projet.id}"/>
+                                <div class="col">
+                                    <input type="text" name="contenu" class="form-control form-control-sm"
+                                           placeholder="Feedback sur cette version..." required/>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="number" name="noteIntermediaire" class="form-control form-control-sm"
+                                           placeholder="Note /20" min="0" max="20" step="0.5" style="width:90px"/>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-sm btn-outline-primary" type="submit">
+                                        <i class="bi bi-chat-left-text me-1"></i>Feedback
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Séances d'encadrement -->
-            <div class="card mb-3">
-                <div class="card-header fw-semibold">
-                    <i class="bi bi-calendar-event me-1"></i>Séances d'encadrement
+            <!-- Ajouter une séance (Encadrant + Admin) -->
+            <div class="card mb-3 border-0 shadow-sm"
+                 sec:authorize="hasAnyRole('ENCADRANT_ACADEMIQUE','ADMINISTRATEUR')">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-calendar-plus me-1 text-primary"></i>Ajouter une séance d'encadrement
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/projets/{id}/seances(id=${projet.id})}" method="post">
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold mb-1">Date et heure <span class="text-danger">*</span></label>
+                                <input type="datetime-local" name="dateSeance" class="form-control form-control-sm" required/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold mb-1">Durée (min) <span class="text-danger">*</span></label>
+                                <input type="number" name="dureeMinutes" class="form-control form-control-sm"
+                                       value="60" min="15" max="480" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold mb-1">Mode <span class="text-danger">*</span></label>
+                                <select name="mode" class="form-select form-select-sm" required>
+                                    <option th:each="m : ${modes}" th:value="${m}" th:text="${m}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Lieu / Lien</label>
+                            <input type="text" name="lieuOuLien" class="form-control form-control-sm"
+                                   placeholder="ex: Bureau encadrant ou https://meet.google.com/..."/>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Notes / Compte rendu</label>
+                            <textarea name="notes" class="form-control form-control-sm" rows="2"
+                                      placeholder="Points discutés, décisions prises..."></textarea>
+                        </div>
+                        <button class="btn btn-sm btn-primary" type="submit">
+                            <i class="bi bi-calendar-check me-1"></i>Enregistrer la séance
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Historique des séances -->
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-calendar-event me-1 text-primary"></i>Séances d'encadrement
                     <span class="badge bg-secondary ms-1" th:text="${#lists.size(projet.seances)}"></span>
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush" th:if="${!#lists.isEmpty(projet.seances)}">
                         <li class="list-group-item" th:each="s : ${projet.seances}">
-                            <span class="badge bg-info text-dark me-2" th:text="${s.mode}"></span>
-                            <span th:text="${s.dateSeance}"></span>
-                            <small class="text-muted ms-2" th:text="${s.dureeMinutes + ' min'}"></small>
-                            <div class="text-muted small" th:if="${s.notes != null}"
-                                 th:text="${s.notes}"></div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-info text-dark me-1" th:text="${s.mode}"></span>
+                                    <strong th:text="${s.dateSeance}"></strong>
+                                    <small class="text-muted ms-1" th:text="'(' + ${s.dureeMinutes} + ' min)'"></small>
+                                    <small class="text-muted ms-1" th:if="${s.lieuOuLien != null}"
+                                           th:text="'— ' + ${s.lieuOuLien}"></small>
+                                </div>
+                                <small class="text-muted" th:text="${s.encadrantNom + ' ' + s.encadrantPrenom}"></small>
+                            </div>
+                            <div class="text-muted small mt-1" th:if="${s.notes != null}" th:text="${s.notes}"></div>
                         </li>
                     </ul>
-                    <p class="text-muted text-center py-3 mb-0" th:if="${#lists.isEmpty(projet.seances)}">
+                    <p class="text-muted text-center py-3 mb-0 small" th:if="${#lists.isEmpty(projet.seances)}">
                         <i class="bi bi-calendar-x me-1"></i>Aucune séance enregistrée
                     </p>
                 </div>
             </div>
 
             <!-- Soutenance -->
-            <div class="card mb-3" th:if="${projet.soutenance != null}">
-                <div class="card-header fw-semibold"><i class="bi bi-mortarboard me-1"></i>Soutenance</div>
+            <div class="card mb-3 border-0 shadow-sm" th:if="${projet.soutenance != null}">
+                <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-mortarboard me-1 text-primary"></i>Soutenance</span>
+                    <div>
+                        <a th:href="@{/soutenances/{id}(id=${projet.soutenance.id})}"
+                           class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-eye me-1"></i>Détail
+                        </a>
+                        <form th:action="@{/soutenances/{id}/cloturer(id=${projet.soutenance.id})}"
+                              method="post" class="d-inline"
+                              sec:authorize="hasRole('ADMINISTRATEUR')"
+                              th:if="${projet.soutenance.statut.name() == 'PLANIFIEE'}">
+                            <button class="btn btn-sm btn-warning" type="submit"
+                                    onclick="return confirm('Clôturer cette soutenance et calculer la note finale ?')">
+                                <i class="bi bi-flag-fill me-1"></i>Clôturer
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 <div class="card-body">
                     <dl class="row mb-0 small">
-                        <dt class="col-5">Date</dt>
-                        <dd class="col-7" th:text="${projet.soutenance.dateSoutenance}"></dd>
-                        <dt class="col-5">Lieu</dt>
-                        <dd class="col-7" th:text="${projet.soutenance.lieu ?: '—'}"></dd>
-                        <dt class="col-5">Statut</dt>
-                        <dd class="col-7" th:text="${projet.soutenance.statut}"></dd>
-                        <dt class="col-5">Résultat</dt>
-                        <dd class="col-7 fw-bold" th:text="${projet.resultatFinal != null ? projet.resultatFinal + '/20' : '—'}"></dd>
+                        <dt class="col-4">Date</dt>
+                        <dd class="col-8" th:text="${projet.soutenance.dateSoutenance}"></dd>
+                        <dt class="col-4">Lieu</dt>
+                        <dd class="col-8" th:text="${projet.soutenance.lieu ?: '—'}"></dd>
+                        <dt class="col-4">Statut</dt>
+                        <dd class="col-8">
+                            <span class="badge"
+                                  th:classappend="${projet.soutenance.statut.name() == 'EFFECTUEE'} ? 'bg-success' : 'bg-warning text-dark'"
+                                  th:text="${projet.soutenance.statut}"></span>
+                        </dd>
+                        <dt class="col-4">Résultat</dt>
+                        <dd class="col-8 fw-bold text-success"
+                            th:text="${projet.resultatFinal != null ? projet.resultatFinal + '/20' : '—'}"></dd>
                     </dl>
                 </div>
             </div>

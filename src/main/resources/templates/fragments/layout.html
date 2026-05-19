@@ -22,8 +22,11 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/projets}"><i class="bi bi-folder me-1"></i>Projets</a>
                 </li>
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRATEUR','MEMBRE_JURY','ENCADRANT_ACADEMIQUE')">
+                    <a class="nav-link" th:href="@{/soutenances}"><i class="bi bi-mortarboard me-1"></i>Soutenances</a>
+                </li>
                 <li class="nav-item" sec:authorize="hasRole('ADMINISTRATEUR')">
-                    <a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Admin</a>
+                    <a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
                 </li>
             </ul>
             <ul class="navbar-nav">

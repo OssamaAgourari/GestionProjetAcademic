@@ -7,4 +7,5 @@ public interface SoutenanceService {
     SoutenanceResponse planifier(Long projetId, CreateSoutenanceRequest request);
     SoutenanceResponse findById(Long id);
     SoutenanceResponse cloturer(Long soutenanceId);
+    java.util.List<SoutenanceResponse> findAll();
 }
